@@ -9,7 +9,7 @@ export interface ProductData {
 }
 
 const FIRECRAWL_API_URL = 'https://api.firecrawl.dev/v2/scrape';
-const FIRECRAWL_TIMEOUT = 30000; // 30 seconds timeout
+const FIRECRAWL_TIMEOUT = 290000; // 290 seconds timeout (less than Vercel's 300s to leave margin)
 
 export class FirecrawlService {
   private apiKey: string | undefined;
@@ -204,8 +204,8 @@ export class FirecrawlService {
         }
         
         // Manejar timeout
-        if (error.name === 'AbortError') {
-          throw new Error('The website took too long to respond. Try another URL or use the manual form.');
+        if (error.name === 'AbortError' || error.message.includes('timeout')) {
+          throw new Error('El sitio web tardó demasiado en responder (más de 4 minutos). Por favor intenta con otra URL o usa el formulario manual.');
         }
       }
       
