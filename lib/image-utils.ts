@@ -1,4 +1,13 @@
-import sharp from 'sharp';
+// Dynamic import for sharp to avoid build issues
+let sharp: typeof import('sharp') | null = null;
+
+// Try to load sharp if available
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  sharp = require('sharp');
+} catch {
+  console.log('Sharp module not available, using fallback for image processing');
+}
 
 // Gemini supported image formats
 const SUPPORTED_MIME_TYPES = [
@@ -30,6 +39,12 @@ export async function processImageForGemini(
       base64: buffer.toString('base64'),
       mimeType: originalMimeType
     };
+  }
+
+  // If sharp is not available and format is not supported, throw error
+  if (!sharp) {
+    console.error(`⚠️ Unsupported image format: ${originalMimeType}. Sharp module not available for conversion.`);
+    throw new Error(`Unsupported image format: ${originalMimeType}. Please use JPEG, PNG, or WebP images.`);
   }
 
   console.log(`⚠️ Unsupported image format: ${originalMimeType}, converting to JPEG...`);
