@@ -335,12 +335,12 @@ CRITICAL INSTRUCTION: Use the provided product image as the central element of t
       ];
     } catch (error) {
       console.error('⚠️ Error fetching product image:', error);
-      // Fallback to text-only prompt
-      contents = [{ text: jsonPromptString }];
+      // Don't generate ad without product image - it would be misleading
+      throw new Error(`Failed to fetch product image. Ad generation requires the actual product image to avoid misrepresentation. Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   } else {
-    // No product image provided, use text-only prompt
-    contents = [{ text: jsonPromptString }];
+    // No product image provided - don't generate misleading ad
+    throw new Error('Product image is required to generate the ad. Please provide a valid image URL.');
   }
 
   try {

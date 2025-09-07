@@ -79,6 +79,17 @@ export async function POST(request: NextRequest) {
             { status: 429 }
           );
         }
+
+        // Handle image-related errors
+        if (error.message.includes("imagen del producto") || error.message.includes("Image not found") || error.message.includes("Failed to fetch image")) {
+          return NextResponse.json<GenerateAdResponse>(
+            {
+              success: false,
+              error: error.message,
+            },
+            { status: 400 }
+          );
+        }
       }
 
       throw error;

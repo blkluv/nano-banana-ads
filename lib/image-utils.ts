@@ -51,9 +51,39 @@ export async function processImageForGemini(
 }
 
 /**
+ * Validates if a URL is properly formatted and accessible
+ */
+function isValidImageUrl(url: string): boolean {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+
+/**
+ * Validates if an image URL is accessible
+ */
+export async function validateImageUrl(imageUrl: string): Promise<boolean> {
+  try {
+    const response = await fetch(imageUrl, { method: 'HEAD' });
+    return response.ok && response.headers.get('content-type')?.startsWith('image/') === true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Fetches and processes an image from URL
  */
 export async function fetchAndProcessImage(imageUrl: string): Promise<ProcessedImage> {
+  // Validate URL format
+  if (!isValidImageUrl(imageUrl)) {
+    throw new Error(`Invalid image URL format: ${imageUrl}`);
+  }
+
   const response = await fetch(imageUrl);
   
   if (!response.ok) {

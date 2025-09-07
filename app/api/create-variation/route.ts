@@ -132,12 +132,12 @@ CRITICAL INSTRUCTION: The product shown in the advertisement MUST be EXACTLY the
           ];
         } catch (error) {
           console.error('⚠️ Error fetching product image for variation:', error);
-          // Fallback to text-only prompt
-          contents = [{ text: JSON.stringify(newPrompt) }];
+          // Don't create variation without product image
+          throw new Error(`Failed to fetch product image for variation. Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       } else {
-        // No product image provided, use text-only prompt
-        contents = [{ text: JSON.stringify(newPrompt) }];
+        // No product image provided - variation requires original product
+        throw new Error('Original product image is required to create a variation.');
       }
       
       const imageResponse = await ai.models.generateContent({

@@ -1,3 +1,5 @@
+import { validateImageUrl } from './image-utils';
+
 export interface ProductData {
   title: string;
   description: string;
@@ -7,7 +9,7 @@ export interface ProductData {
 }
 
 const FIRECRAWL_API_URL = 'https://api.firecrawl.dev/v2/scrape';
-const FIRECRAWL_TIMEOUT = 30000; // 30 segundos timeout
+const FIRECRAWL_TIMEOUT = 30000; // 30 seconds timeout
 
 export class FirecrawlService {
   private apiKey: string | undefined;
@@ -37,15 +39,18 @@ export class FirecrawlService {
         },
         body: JSON.stringify({
           url,
-          formats: [{
-            type: "json",
-            prompt: `Extract the following product information from this e-commerce page. Be very precise with the data extraction: 
-              - productTitle (the main product name)
-              - fullProductDescription (complete product description) 
-              - priceWithCurrency (the actual selling price with currency symbol like $69.99)
-              - keyFeatures (main product features as array, maximum 5)
-              - mainProductImageUrl (the main product image URL)`
-          }]
+          formats: [
+            {
+              type: "json",
+              prompt: `Extract the following product information from this e-commerce page. Be very precise with the data extraction: 
+                - productTitle (the main product name)
+                - fullProductDescription (complete product description) 
+                - priceWithCurrency (the actual selling price with currency symbol like $69.99)
+                - keyFeatures (main product features as array, maximum 5)
+                - mainProductImageUrl (the main product image URL)`
+            },
+            "links"
+          ]
         }),
         signal: AbortSignal.timeout(FIRECRAWL_TIMEOUT)
       });
@@ -63,6 +68,15 @@ export class FirecrawlService {
 
       const firecrawlData = await response.json();
       console.log('✅ FireCrawl response received');
+      
+      // Log the entire response structure to understand what we're getting
+      console.log('📦 FireCrawl data structure:', {
+        hasData: !!firecrawlData.data,
+        hasJson: !!firecrawlData.data?.json,
+        hasLinks: !!firecrawlData.data?.links,
+        hasScreenshot: !!firecrawlData.data?.screenshot,
+        jsonKeys: firecrawlData.data?.json ? Object.keys(firecrawlData.data.json) : []
+      });
 
       if (!firecrawlData.success || !firecrawlData.data) {
         throw new Error('Could not get data from URL');
@@ -75,12 +89,54 @@ export class FirecrawlService {
       if (jsonExtract) {
         console.log('📋 JSON data extracted:', jsonExtract);
         
+        // Check if the image URL is valid before using it
+        let imageUrl = jsonExtract.mainProductImageUrl || '';
+        
+        // Validate the extracted image URL
+        if (imageUrl) {
+          console.log('🔍 Validating extracted image URL:', imageUrl);
+          const isValid = await validateImageUrl(imageUrl);
+          
+          if (!isValid) {
+            console.log('❌ Extracted image URL is not accessible');
+            
+            // Try to find alternative images from links
+            if (firecrawlData.data?.links) {
+              console.log('🔍 Searching for alternative images in links...');
+              const links = firecrawlData.data.links;
+              
+              // Find potential product images
+              const imageLinks = links.filter((link: string) => 
+                link.match(/\.(jpg|jpeg|png|webp)$/i) && 
+                !link.includes('icon') && 
+                !link.includes('logo') &&
+                !link.includes('sprite') &&
+                !link.includes('pixel')
+              );
+              
+              console.log(`📸 Found ${imageLinks.length} potential image links`);
+              
+              // Validate each potential image
+              for (const link of imageLinks) {
+                const linkIsValid = await validateImageUrl(link);
+                if (linkIsValid) {
+                  console.log('✅ Found working image URL:', link);
+                  imageUrl = link;
+                  break;
+                }
+              }
+            }
+          } else {
+            console.log('✅ Extracted image URL is valid');
+          }
+        }
+        
         productData = {
           title: jsonExtract.productTitle || '',
           description: jsonExtract.fullProductDescription || '',
           price: jsonExtract.priceWithCurrency || '',
           features: Array.isArray(jsonExtract.keyFeatures) ? jsonExtract.keyFeatures.slice(0, 5) : [],
-          imageUrl: jsonExtract.mainProductImageUrl || ''
+          imageUrl: imageUrl
         };
       } else {
         // Fallback: intentar con markdown/html si no hay JSON
