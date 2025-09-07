@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import type { Part } from "@google/genai";
 import type { AdPrompt } from "./types";
+import { fetchAndProcessImage } from "./image-utils";
 
 const getGeminiClient = () => {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -312,19 +313,11 @@ export async function generateAdvertisementImage(adPrompt: AdPrompt, productImag
   
   if (productImageUrl) {
     try {
-      // Fetch the product image
+      // Fetch and process the product image
       console.log('📥 Fetching product image from:', productImageUrl);
-      const imageResponse = await fetch(productImageUrl);
+      const processedImage = await fetchAndProcessImage(productImageUrl);
       
-      if (!imageResponse.ok) {
-        throw new Error(`Failed to fetch image: ${imageResponse.status}`);
-      }
-      
-      const imageBuffer = await imageResponse.arrayBuffer();
-      const base64Image = Buffer.from(imageBuffer).toString('base64');
-      const contentType = imageResponse.headers.get('content-type') || 'image/jpeg';
-      
-      console.log('✅ Product image fetched, size:', imageBuffer.byteLength, 'type:', contentType);
+      console.log('✅ Product image processed, format:', processedImage.mimeType);
       
       // Create prompt with image as per documentation
       contents = [
@@ -335,8 +328,8 @@ CRITICAL INSTRUCTION: Use the provided product image as the central element of t
         },
         {
           inlineData: {
-            mimeType: contentType,
-            data: base64Image,
+            mimeType: processedImage.mimeType,
+            data: processedImage.base64,
           },
         },
       ];

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { GoogleGenAI } from '@google/genai';
+import { processImageForGemini } from '@/lib/image-utils';
 
 const editImageRequestSchema = z.object({
   imageBase64: z.string(),
@@ -39,11 +40,15 @@ export async function POST(request: NextRequest) {
     try {
       console.log("Editando imagen con prompt:", prompt);
       
-      // Convert base64 to image data for Gemini
+      // Process the image to ensure it's in a supported format
+      const imageBuffer = Buffer.from(imageBase64, 'base64');
+      const processedImage = await processImageForGemini(imageBuffer, 'image/jpeg'); // Assume JPEG if not specified
+      
+      // Convert to image data for Gemini
       const imageData = {
         inlineData: {
-          data: imageBase64,
-          mimeType: "image/jpeg"
+          data: processedImage.base64,
+          mimeType: processedImage.mimeType
         }
       };
       

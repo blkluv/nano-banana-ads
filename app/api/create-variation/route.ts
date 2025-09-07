@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { GoogleGenAI } from '@google/genai';
 import type { Part } from '@google/genai';
+import { fetchAndProcessImage } from '@/lib/image-utils';
 
 const createVariationRequestSchema = z.object({
   originalPrompt: z.object({}), // The original JSON prompt
@@ -111,17 +112,9 @@ IMPORTANT:
       if (productData.imageUrl) {
         try {
           console.log('📥 Fetching product image for variation:', productData.imageUrl);
-          const imageResponse = await fetch(productData.imageUrl);
+          const processedImage = await fetchAndProcessImage(productData.imageUrl);
           
-          if (!imageResponse.ok) {
-            throw new Error(`Failed to fetch image: ${imageResponse.status}`);
-          }
-          
-          const imageBuffer = await imageResponse.arrayBuffer();
-          const base64Image = Buffer.from(imageBuffer).toString('base64');
-          const contentType = imageResponse.headers.get('content-type') || 'image/jpeg';
-          
-          console.log('✅ Product image fetched for variation');
+          console.log('✅ Product image processed for variation, format:', processedImage.mimeType);
           
           // Create prompt with image - SAME product, different ad design
           contents = [
@@ -132,8 +125,8 @@ CRITICAL INSTRUCTION: The product shown in the advertisement MUST be EXACTLY the
             },
             {
               inlineData: {
-                mimeType: contentType,
-                data: base64Image,
+                mimeType: processedImage.mimeType,
+                data: processedImage.base64,
               },
             },
           ];
