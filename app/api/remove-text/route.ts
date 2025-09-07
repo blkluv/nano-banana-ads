@@ -3,6 +3,9 @@ import { z } from 'zod';
 import { GoogleGenAI } from '@google/genai';
 import { processImageForGemini } from '@/lib/image-utils';
 
+// Configure maximum duration for this function
+export const maxDuration = 300;
+
 const removeTextRequestSchema = z.object({
   imageBase64: z.string(),
 });

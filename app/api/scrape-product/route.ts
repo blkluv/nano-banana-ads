@@ -3,6 +3,9 @@ import { z } from 'zod';
 import { firecrawlService } from '@/lib/firecrawl';
 import type { ScrapeResponse } from '@/lib/types';
 
+// Configure maximum duration for this function (60 seconds should be enough for scraping)
+export const maxDuration = 60;
+
 const scrapeRequestSchema = z.object({
   url: z.string().url(),
 });

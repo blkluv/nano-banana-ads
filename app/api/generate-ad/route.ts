@@ -4,6 +4,9 @@ import { generateAdPrompt, generateAdvertisementImage } from '@/lib/gemini';
 import { ProductDataSchema } from '@/lib/types';
 import type { GenerateAdResponse } from '@/lib/types';
 
+// Configure maximum duration for this function (300 seconds for Hobby plan)
+export const maxDuration = 300;
+
 const generateAdRequestSchema = z.object({
   productData: ProductDataSchema,
 });

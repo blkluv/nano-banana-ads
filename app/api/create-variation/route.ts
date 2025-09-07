@@ -4,6 +4,9 @@ import { GoogleGenAI } from '@google/genai';
 import type { Part } from '@google/genai';
 import { fetchAndProcessImage } from '@/lib/image-utils';
 
+// Configure maximum duration for this function
+export const maxDuration = 300;
+
 const createVariationRequestSchema = z.object({
   originalPrompt: z.object({}), // The original JSON prompt
   productData: z.object({
