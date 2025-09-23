@@ -1,143 +1,143 @@
-# Generador de Anuncios con IA - Hackathon Google
+# AI Ad Generator - Google Hackathon
 
-Una aplicación Next.js que genera anuncios publicitarios profesionales usando Google Gemini AI. Permite extraer información de productos desde URLs usando Firecrawl (opcional) o ingresarla manualmente.
+A Next.js application that generates professional advertising ads using Google Gemini AI. Allows extracting product information from URLs using Firecrawl (optional) or entering it manually.
 
-## Características
+## Features
 
-- 🔗 **Scraping de URLs**: Extrae automáticamente información de productos usando Firecrawl
-- ✏️ **Entrada Manual**: Formulario completo para ingresar datos manualmente si Firecrawl no está disponible
-- 🤖 **IA Generativa**: Usa Gemini 2.5 Flash para generar prompts y Gemini Image Preview (nano-banana) para crear imágenes
-- 🎨 **Diseño Profesional**: Interfaz moderna con shadcn/ui y Tailwind CSS
-- 💾 **Descarga y Compartir**: Descarga o comparte los anuncios generados
-- 🏢 **Logos Personalizados**: Incluye el logo de tu empresa en los anuncios
+- 🔗 **URL Scraping**: Automatically extracts product information using Firecrawl
+- ✏️ **Manual Entry**: Complete form to enter data manually if Firecrawl is not available
+- 🤖 **Generative AI**: Uses Gemini 2.5 Flash to generate prompts and Gemini Image Preview (nano-banana) to create images
+- 🎨 **Professional Design**: Modern interface with shadcn/ui and Tailwind CSS
+- 💾 **Download and Share**: Download or share the generated ads
+- 🏢 **Custom Logos**: Include your company logo in the ads
 
-## Tecnologías
+## Technologies
 
-- Next.js 15 con App Router
+- Next.js 15 with App Router
 - TypeScript
 - Tailwind CSS
 - shadcn/ui
 - Google Gemini AI (@google/genai)
-- Firecrawl (opcional)
+- Firecrawl (optional)
 - React Hook Form + Zod
 
-## Instalación
+## Installation
 
-1. Clona el repositorio:
+1. Clone the repository:
 ```bash
-git clone [tu-repositorio]
+git clone [your-repository]
 cd nano-banana-hackaton
 ```
 
-2. Instala las dependencias:
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. Configura las variables de entorno:
+3. Set up environment variables:
 ```bash
 cp .env.example .env.local
 ```
 
-4. Edita `.env.local` y agrega tus claves API:
+4. Edit `.env.local` and add your API keys:
 ```env
-GEMINI_API_KEY=tu_clave_de_gemini_aqui
-FIRECRAWL_API_KEY=tu_clave_de_firecrawl_aqui_opcional
+GEMINI_API_KEY=your_gemini_key_here
+FIRECRAWL_API_KEY=your_firecrawl_key_here_optional
 ```
 
-## Cómo obtener las API Keys
+## How to Get API Keys
 
-### Google Gemini API Key (Requerida)
-1. Ve a [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Inicia sesión con tu cuenta de Google
-3. Crea una nueva API Key
-4. Copia la clave y pégala en `.env.local`
+### Google Gemini API Key (Required)
+1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Sign in with your Google account
+3. Create a new API Key
+4. Copy the key and paste it in `.env.local`
 
-### Firecrawl API Key (Opcional)
-1. Ve a [Firecrawl.dev](https://www.firecrawl.dev/)
-2. Crea una cuenta gratuita
-3. Obtén tu API Key desde el dashboard
-4. Copia la clave y pégala en `.env.local`
+### Firecrawl API Key (Optional)
+1. Go to [Firecrawl.dev](https://www.firecrawl.dev/)
+2. Create a free account
+3. Get your API Key from the dashboard
+4. Copy the key and paste it in `.env.local`
 
-*Nota: Si no tienes Firecrawl, la app funcionará perfectamente con el formulario manual*
+*Note: If you don't have Firecrawl, the app will work perfectly with the manual form*
 
-## Uso
+## Usage
 
-1. Ejecuta el servidor de desarrollo:
+1. Run the development server:
 ```bash
 npm run dev
 ```
 
-2. Abre [http://localhost:3000](http://localhost:3000) en tu navegador
+2. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-3. Elige entre dos modos:
-   - **URL del Producto**: Pega la URL de cualquier producto online
-   - **Entrada Manual**: Completa el formulario con los datos del producto
+3. Choose between two modes:
+   - **Product URL**: Paste the URL of any online product
+   - **Manual Entry**: Complete the form with product data
 
-4. Opcionalmente, sube el logo de tu empresa
+4. Optionally, upload your company logo
 
-5. Haz clic en "Generar Anuncio" y espera mientras la IA crea tu anuncio
+5. Click "Generate Ad" and wait while the AI creates your ad
 
-6. Una vez generado, puedes:
-   - Descargar la imagen
-   - Compartirla
-   - Ver el prompt generado por la IA
+6. Once generated, you can:
+   - Download the image
+   - Share it
+   - View the AI-generated prompt
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 /app
   /api
-    /generate-ad      # Genera anuncios con Gemini
-    /scrape-product   # Extrae datos con Firecrawl
+    /generate-ad      # Generates ads with Gemini
+    /scrape-product   # Extracts data with Firecrawl
   layout.tsx
-  page.tsx           # Página principal
+  page.tsx           # Main page
 /components
-  /ui               # Componentes de shadcn/ui
-  GeneratedAd.tsx   # Muestra el anuncio generado
-  ProductForm.tsx   # Formulario manual
-  UrlInput.tsx      # Input de URL
+  /ui               # shadcn/ui components
+  GeneratedAd.tsx   # Displays the generated ad
+  ProductForm.tsx   # Manual form
+  UrlInput.tsx      # URL input
 /lib
-  firecrawl.ts     # Cliente de Firecrawl
-  gemini.ts        # Cliente de Gemini AI
-  types.ts         # Tipos TypeScript
+  firecrawl.ts     # Firecrawl client
+  gemini.ts        # Gemini AI client
+  types.ts         # TypeScript types
 ```
 
-## Flujo de la Aplicación
+## Application Flow
 
-1. **Extracción de Datos**:
-   - Con URL: Firecrawl → Datos estructurados
-   - Manual: Formulario → Datos estructurados
+1. **Data Extraction**:
+   - With URL: Firecrawl → Structured data
+   - Manual: Form → Structured data
 
-2. **Generación de Prompt**:
-   - Datos → Gemini 2.5 Flash → Prompt JSON estructurado
+2. **Prompt Generation**:
+   - Data → Gemini 2.5 Flash → Structured JSON prompt
 
-3. **Generación de Imagen**:
-   - Prompt + Logo → Gemini Image Preview → Imagen del anuncio
+3. **Image Generation**:
+   - Prompt + Logo → Gemini Image Preview → Ad image
 
-## Desarrollo
+## Development
 
 ```bash
-# Ejecutar en modo desarrollo
+# Run in development mode
 npm run dev
 
-# Construir para producción
+# Build for production
 npm run build
 
-# Ejecutar en producción
+# Run in production
 npm start
 
-# Verificar tipos
+# Check types
 npm run type-check
 
-# Ejecutar linter
+# Run linter
 npm run lint
 ```
 
 ## Demo
 
-Esta es una aplicación demo para la hackathon de Google. No requiere autenticación de usuarios y está optimizada para demostrar las capacidades de generación de imágenes con Gemini AI.
+This is a demo application for Google's hackathon. It doesn't require user authentication and is optimized to demonstrate image generation capabilities with Gemini AI.
 
-## Licencia
+## License
 
 MIT
