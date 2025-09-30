@@ -1,5 +1,8 @@
 # AI Ad Generator - Google Hackathon
 
+![tmpymljkmsx](https://github.com/user-attachments/assets/1bc4136f-a7b0-4faa-bdbc-b7dd5e99a670)
+
+
 A Next.js application that generates professional advertising ads using Google Gemini AI. Allows extracting product information from URLs using Firecrawl (optional) or entering it manually.
 
 ## Features
