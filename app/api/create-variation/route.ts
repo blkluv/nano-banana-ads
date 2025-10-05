@@ -94,7 +94,7 @@ IMPORTANT:
 
       // Generate new JSON prompt variation
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-1.5-flash",
         contents: variationPrompt,
         config: {
           temperature: 0.9, // Higher temperature for more variation
